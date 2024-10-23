@@ -1,3 +1,5 @@
+import { determineOffspringBloodType } from "../utils/bloodTypes";
+
 const initialState = {
     donors: [
         { id: 1, name: 'Donor 1', bloodType: 'A+', donationCount: 0, alive: true },
@@ -15,5 +17,39 @@ const initialState = {
 }
 
 const gameReducer = (state, action) => {
-    
-}
+    switch (action.type) {
+      case 'SELECT_DONOR':
+        return { ...state, selectedDonors: [...state.selectedDonors, action.payload] };
+      case 'BREED_DONORS':
+        { const offspring = {
+          id: state.donors.length + 1,
+          name: `Offspring ${state.donors.length + 1}`,
+          bloodType: determineOffspringBloodType(state.selectedDonors[0].bloodType, state.selectedDonors[1].bloodType),
+          donationCount: 0,
+          alive: true,
+        };
+        return { ...state, donors: [...state.donors, offspring], selectedDonors: [] }; }
+      case 'START_TRANSFUSION':
+        return { ...state, phase: 'transfusion' };
+      case 'LOSE_BLOOD':
+        return { ...state, donorsNeedingBlood: action.payload };
+      case 'DONATE_BLOOD':
+        return {
+          ...state,
+          donors: state.donors.map(donor =>
+            donor.id === action.payload.donorId ? { ...donor, donationCount: donor.donationCount + 1 } : donor
+          ),
+        };
+      case 'DONOR_DIES':
+        return {
+          ...state,
+          donors: state.donors.map(donor =>
+            donor.id === action.payload.donorId ? { ...donor, alive: false } : donor
+          ),
+        };
+      default:
+        return state;
+    }
+  };
+  
+  export { initialState, gameReducer };

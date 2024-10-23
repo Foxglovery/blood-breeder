@@ -17,13 +17,41 @@ export const canDonateTo = (donorType, recipientType) => {
 
 // Function to determine offspring blood types
 // Output could be ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']
-export const determineOffspringBloodType = (parent1ABO, parent1Rh, parent2ABO, parent2Rh) => {
+export const determineOffspringBloodType = (parent1, parent2) => {
     const bloodTypeMap = {
         'AA': 'A', 'AO': 'A', 'OA': 'A',
         'BB': 'B', 'BO': 'B', 'OB': 'B',
         'AB': 'AB', 'BA': 'AB',
         'OO': 'O'
     };
+
+    // Helper function to split blood type into alleles
+    function getABOAlleles(bloodType) {
+        switch (bloodType[0]) {
+            case 'A':
+                return bloodType.includes('B') ? ['A', 'B'] : ['A', 'O'];
+            case 'B':
+                return bloodType.includes('A') ? ['A', 'B'] : ['B', 'O'];
+            case 'O':
+                return ['O', 'O'];
+            case 'AB':
+                return ['A', 'B'];
+            default:
+                throw new Error("Invalid blood type");
+        }
+    }
+
+    // Helper function to get Rh alleles from a single character
+    function getRhAlleles(bloodType) {
+        const rh = bloodType.slice(-1); // Get the last character ('+' or '-')
+        return rh === '+' ? ['+', '-'] : ['-', '-'];
+    }
+
+    // Extract alleles for parents
+    const parent1ABO = getABOAlleles(parent1);
+    const parent1Rh = getRhAlleles(parent1);
+    const parent2ABO = getABOAlleles(parent2);
+    const parent2Rh = getRhAlleles(parent2);
 
     const combinationsABO = [];
     const combinationsRh = [];
@@ -53,12 +81,14 @@ export const determineOffspringBloodType = (parent1ABO, parent1Rh, parent2ABO, p
     const possibleRhTypes = [...new Set(combinationsRh)];
 
     // Combine ABO and Rh to get the complete blood type possibilities
-    const result = [];
+    const combinedBloodTypes = [];
     possibleBloodTypes.forEach(abo => {
         possibleRhTypes.forEach(rh => {
-            result.push(`${abo}${rh}`);
+            combinedBloodTypes.push(`${abo}${rh}`);
         });
     });
 
-    return result;
+       // Randomly select one of the available blood types
+       const randomIndex = Math.floor(Math.random() * combinedBloodTypes.length);
+       return combinedBloodTypes[randomIndex];
 }
