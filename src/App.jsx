@@ -11,8 +11,11 @@ function App() {
     }
   };
 
-  const handleBreedDonors = (donor1Id, donor2Id) => {
-    dispatch({ type: 'BREED_DONORS', payload: { donor1Id, donor2Id } });
+  const handleBreedDonors = (donor1, donor2) => {
+    dispatch({ type: 'SELECT_DONOR', payload: donor1 });
+    dispatch({ type: 'SELECT_DONOR', payload: donor2 });
+    // We should wait until both are added before calling the breed action.
+    dispatch({ type: 'BREED_DONORS' });
   };
 
   const handleStartTransfusion = () => {
@@ -25,6 +28,7 @@ function App() {
      
       {state.phase === 'breeding' && (
   <BreedingPanel donors={state.donors} onBreed={handleBreedDonors} />
+
 )}
       {state.phase === 'transfusion' && (
         <div>

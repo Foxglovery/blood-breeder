@@ -14,42 +14,69 @@ const initialState = {
     phase: 'breeding',
     selectedDonors: [],
     donorsNeedingBlood: []
-}
+};
 
 const gameReducer = (state, action) => {
     switch (action.type) {
-      case 'SELECT_DONOR':
-        return { ...state, selectedDonors: [...state.selectedDonors, action.payload] };
-      case 'BREED_DONORS':
-        { const offspring = {
-          id: state.donors.length + 1,
-          name: `Offspring ${state.donors.length + 1}`,
-          bloodType: determineOffspringBloodType(state.selectedDonors[0].bloodType, state.selectedDonors[1].bloodType),
-          donationCount: 0,
-          alive: true,
-        };
-        return { ...state, donors: [...state.donors, offspring], selectedDonors: [] }; }
-      case 'START_TRANSFUSION':
-        return { ...state, phase: 'transfusion' };
-      case 'LOSE_BLOOD':
-        return { ...state, donorsNeedingBlood: action.payload };
-      case 'DONATE_BLOOD':
-        return {
-          ...state,
-          donors: state.donors.map(donor =>
-            donor.id === action.payload.donorId ? { ...donor, donationCount: donor.donationCount + 1 } : donor
-          ),
-        };
-      case 'DONOR_DIES':
-        return {
-          ...state,
-          donors: state.donors.map(donor =>
-            donor.id === action.payload.donorId ? { ...donor, alive: false } : donor
-          ),
-        };
-      default:
-        return state;
+        case 'SELECT_DONOR':
+            // Check if donor is already selected to avoid duplicates
+            if (state.selectedDonors.find(d => d.id === action.payload.id)) {
+                return state; // No duplicate additions
+            }
+            return { ...state, selectedDonors: [...state.selectedDonors, action.payload] };
+
+        case 'BREED_DONORS':
+            // Ensure we have exactly 2 donors selected
+            if (state.selectedDonors.length !== 2) {
+                console.error("Two donors must be selected for breeding.");
+                return state;
+            }
+
+            const [donor1, donor2] = state.selectedDonors;
+            if (!donor1 || !donor2) {
+                console.error("One or both selected donors could not be found.");
+                return state;
+            }
+
+            const offspring = {
+                id: state.donors.length + 1,
+                name: `Offspring ${state.donors.length + 1}`,
+                bloodType: determineOffspringBloodType(donor1.bloodType, donor2.bloodType),
+                donationCount: 0,
+                alive: true,
+            };
+
+            return {
+                ...state,
+                donors: [...state.donors, offspring],
+                selectedDonors: [], // Reset selection
+            };
+
+        case 'START_TRANSFUSION':
+            return { ...state, phase: 'transfusion' };
+
+        case 'LOSE_BLOOD':
+            return { ...state, donorsNeedingBlood: action.payload };
+
+        case 'DONATE_BLOOD':
+            return {
+                ...state,
+                donors: state.donors.map(donor =>
+                    donor.id === action.payload.donorId ? { ...donor, donationCount: donor.donationCount + 1 } : donor
+                ),
+            };
+
+        case 'DONOR_DIES':
+            return {
+                ...state,
+                donors: state.donors.map(donor =>
+                    donor.id === action.payload.donorId ? { ...donor, alive: false } : donor
+                ),
+            };
+
+        default:
+            return state;
     }
-  };
-  
-  export { initialState, gameReducer };
+};
+
+export { initialState, gameReducer };

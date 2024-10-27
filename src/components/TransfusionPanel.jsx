@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 
+// eslint-disable-next-line react/prop-types
 const TransfusionPanel = ({ donors, onTransfusion }) => {
   const [selectedDonor, setSelectedDonor] = useState(null);
   const [selectedRecipient, setSelectedRecipient] = useState(null);
@@ -18,6 +19,7 @@ const TransfusionPanel = ({ donors, onTransfusion }) => {
       <div>
         <h3>Select Donor to Give Blood:</h3>
         {donors
+          // eslint-disable-next-line react/prop-types
           .filter(d => d.alive && d.donationCount < 4) // Only show donors who can donate
           .map(donor => (
             <button
@@ -36,6 +38,7 @@ const TransfusionPanel = ({ donors, onTransfusion }) => {
       <div>
         <h3>Select Recipient to Receive Blood:</h3>
         {donors
+          // eslint-disable-next-line react/prop-types
           .filter(d => d.alive && d !== selectedDonor) // Only show potential recipients
           .map(recipient => (
             <button
