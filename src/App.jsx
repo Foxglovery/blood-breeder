@@ -1,6 +1,7 @@
 import React, { useReducer } from 'react';
 import { initialState, gameReducer } from './reducers/gameReducer';
 import BreedingPanel from './components/BreedingPanel';
+import './App.css'
 
 function App() {
   const [state, dispatch] = useReducer(gameReducer, initialState);

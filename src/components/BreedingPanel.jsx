@@ -46,11 +46,11 @@ const BreedingPanel = ({ donors, onBreed }) => {
         {donors.map(donor => (
           <button
             key={donor.id}
+            className={donor.isOffspring ? "offspring-btn" : "donor-btn"}
             onClick={() => handleSelectDonor(donor.id)}
             style={{
               backgroundColor: selectedDonors.includes(donor.id) ? 'lightblue' : 'white',
-              margin: '5px',
-              padding: '10px',
+             
             }}
           >
             {donor.name} ({donor.bloodType})

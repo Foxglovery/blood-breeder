@@ -2,14 +2,14 @@ import { determineOffspringBloodType } from "../utils/bloodTypes";
 
 const initialState = {
     donors: [
-        { id: 1, name: 'Donor 1', bloodType: 'A+', donationCount: 0, alive: true },
-        { id: 2, name: 'Donor 2', bloodType: 'A-', donationCount: 0, alive: true },
-        { id: 3, name: 'Donor 3', bloodType: 'AB+', donationCount: 0, alive: true },
-        { id: 4, name: 'Donor 4', bloodType: 'AB-', donationCount: 0, alive: true },
-        { id: 5, name: 'Donor 5', bloodType: 'B+', donationCount: 0, alive: true },
-        { id: 6, name: 'Donor 6', bloodType: 'B-', donationCount: 0, alive: true },
-        { id: 7, name: 'Donor 7', bloodType: 'O-', donationCount: 0, alive: true },
-        { id: 8, name: 'Donor 8', bloodType: 'O+', donationCount: 0, alive: true },
+        { id: 1, name: 'Donor 1', bloodType: 'A+', donationCount: 0, alive: true, isOffspring: false },
+        { id: 2, name: 'Donor 2', bloodType: 'A-', donationCount: 0, alive: true, isOffspring: false },
+        { id: 3, name: 'Donor 3', bloodType: 'AB+', donationCount: 0, alive: true, isOffspring: false },
+        { id: 4, name: 'Donor 4', bloodType: 'AB-', donationCount: 0, alive: true, isOffspring: false },
+        { id: 5, name: 'Donor 5', bloodType: 'B+', donationCount: 0, alive: true, isOffspring: false },
+        { id: 6, name: 'Donor 6', bloodType: 'B-', donationCount: 0, alive: true, isOffspring: false },
+        { id: 7, name: 'Donor 7', bloodType: 'O-', donationCount: 0, alive: true, isOffspring: false },
+        { id: 8, name: 'Donor 8', bloodType: 'O+', donationCount: 0, alive: true, isOffspring: false },
     ],
     phase: 'breeding',
     selectedDonors: [],
@@ -27,7 +27,7 @@ const gameReducer = (state, action) => {
 
         case 'BREED_DONORS':
             // Ensure we have exactly 2 donors selected
-            if (state.selectedDonors.length !== 2) {
+            { if (state.selectedDonors.length !== 2) {
                 console.error("Two donors must be selected for breeding.");
                 return state;
             }
@@ -44,13 +44,15 @@ const gameReducer = (state, action) => {
                 bloodType: determineOffspringBloodType(donor1.bloodType, donor2.bloodType),
                 donationCount: 0,
                 alive: true,
+                isOffspring: true
+                
             };
 
             return {
                 ...state,
                 donors: [...state.donors, offspring],
                 selectedDonors: [], // Reset selection
-            };
+            }; }
 
         case 'START_TRANSFUSION':
             return { ...state, phase: 'transfusion' };
